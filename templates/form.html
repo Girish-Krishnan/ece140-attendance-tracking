@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lecture Check-In</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Lecture Attendance Check-In</h1>
+        <form method="post" action="/submit">
+            <label for="full_name">Full Name:</label>
+            <input type="text" id="full_name" name="full_name" required>
+
+            <label for="pid">PID:</label>
+            <input type="text" id="pid" name="pid" required pattern="A\d{8}" title="PID should start with 'A' followed by 8 digits">
+
+            <button type="submit">Check In</button>
+        </form>
+    </div>
+</body>
+</html>

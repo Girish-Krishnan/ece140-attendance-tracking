@@ -5,8 +5,9 @@ from fastapi.templating import Jinja2Templates
 from datetime import datetime
 import csv
 import os
+import uvicorn
 
-app = FastAPI()
+app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
 # Setup static and template directories
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -38,3 +39,6 @@ async def submit_form(request: Request, full_name: str = Form(...), pid: str = F
         "name": full_name,
         "time": timestamp
     })
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

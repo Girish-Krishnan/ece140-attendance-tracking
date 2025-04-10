@@ -7,8 +7,10 @@ import os
 import shutil
 import csv
 import uuid
+import uvicorn
 
-app = FastAPI()
+# 🚫 Disable default Swagger & ReDoc docs
+app = FastAPI(docs_url=None, redoc_url=None)
 
 # Static & templates
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -39,7 +41,7 @@ async def submit_form(
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     ip = request.client.host
 
-    # Save image with a unique filename
+    # Save image
     ext = os.path.splitext(photo.filename)[-1]
     filename = f"{uuid.uuid4().hex}{ext}"
     file_path = os.path.join(UPLOAD_DIR, filename)
@@ -58,3 +60,15 @@ async def submit_form(
         "time": timestamp,
         "image_url": f"/uploads/{filename}"
     })
+
+# 🎣 Rick Roll instead of FastAPI docs
+@app.get("/docs", response_class=HTMLResponse)
+async def custom_docs(request: Request):
+    return templates.TemplateResponse("rickroll.html", {"request": request})
+
+@app.get("/redoc", response_class=HTMLResponse)
+async def rickroll_redoc(request: Request):
+    return templates.TemplateResponse("rickroll.html", {"request": request})
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="localhost", port=8000)

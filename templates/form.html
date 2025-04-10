@@ -6,16 +6,95 @@
 </head>
 <body>
     <div class="container">
-        <h1>Lecture Attendance Check-In</h1>
-        <form method="post" action="/submit">
+        <h1>📸 Lecture Attendance Check-In</h1>
+        <form id="checkin-form" method="post" action="/submit" enctype="multipart/form-data">
             <label for="full_name">Full Name:</label>
             <input type="text" id="full_name" name="full_name" required>
 
             <label for="pid">PID:</label>
             <input type="text" id="pid" name="pid" required pattern="A\d{8}" title="PID should start with 'A' followed by 8 digits">
 
-            <button type="submit">Check In</button>
+            <label>Take a Selfie:</label>
+            <div id="camera-container">
+                <video id="video" autoplay></video>
+                <canvas id="canvas" style="display:none;"></canvas>
+                <img id="preview" style="display:none;" />
+            </div>
+
+            <input type="file" id="photo-file" name="photo" style="display:none;" accept="image/png, image/jpeg">
+
+            <div id="buttons">
+                <button type="button" id="capture-button">📷 Take Snapshot</button>
+                <button type="button" id="retry-button" style="display:none;">🔁 Try Again</button>
+            </div>
+
+            <button type="submit" id="submit-button" style="display:none;">✅ Submit Check-In</button>
         </form>
     </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const preview = document.getElementById('preview');
+        const photoFile = document.getElementById('photo-file');
+        const captureButton = document.getElementById('capture-button');
+        const retryButton = document.getElementById('retry-button');
+        const submitButton = document.getElementById('submit-button');
+        let stream = null;
+
+        async function startCamera() {
+            stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        }
+
+        captureButton.onclick = () => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            canvas.toBlob(blob => {
+                const file = new File([blob], "selfie.png", { type: "image/png" });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                photoFile.files = dataTransfer.files;
+
+                // Show preview
+                preview.src = URL.createObjectURL(blob);
+                preview.style.display = "block";
+                video.style.display = "none";
+                captureButton.style.display = "none";
+                retryButton.style.display = "inline-block";
+
+                // Show submit button
+                submitButton.style.display = "block";
+
+                stopCamera();
+            }, "image/png");
+        };
+
+        retryButton.onclick = () => {
+            preview.style.display = "none";
+            captureButton.style.display = "inline-block";
+            retryButton.style.display = "none";
+            submitButton.style.display = "none";
+            video.style.display = "block";
+            startCamera();
+        };
+
+        startCamera();
+
+        // Prevent submission if no photo is captured
+        document.getElementById("checkin-form").addEventListener("submit", function(e) {
+            if (!photoFile.files.length) {
+                e.preventDefault();
+                alert("Please take a photo before submitting.");
+            }
+        });
+    </script>
 </body>
 </html>

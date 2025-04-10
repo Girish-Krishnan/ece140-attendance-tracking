@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Check-In Successful</title>
+    <title>Check-In Success</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="container">
         <h1>✅ Check-In Successful</h1>
-        <p>Thanks, <strong>{{ name }}</strong>!</p>
+        <p>Thank you, <strong>{{ name }}</strong>!</p>
         <p>Your attendance was recorded at <strong>{{ time }}</strong>.</p>
-        <a href="/">Check in again</a>
+        <img src="{{ image_url }}" alt="Your submitted selfie" class="submitted-image">
+        <a href="/">⬅️ Check in again</a>
     </div>
 </body>
 </html>

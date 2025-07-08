@@ -1,4 +1,4 @@
-# ECE 140 Attendance Tracking
+# Lecture Attendance Tracking WebApp
 
 This repository contains a small FastAPI application that records lecture attendance. Students enter their name and PID, take a webcam photo, and the data is logged locally.
 
